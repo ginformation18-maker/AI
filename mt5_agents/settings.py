@@ -8,6 +8,11 @@ from dotenv import load_dotenv
 ROOT = Path(__file__).resolve().parents[1]
 load_dotenv(ROOT / ".env")
 
+# Hard safety ceilings. These are code-owned and are not configurable.
+MAX_RISK_PER_TRADE_PCT = 0.25
+MAX_DAILY_LOSS_PCT = 1.0
+MAX_OPEN_POSITIONS = 2
+
 
 def _get_float(name: str, default: float) -> float:
     return float(os.getenv(name, str(default)))
@@ -71,12 +76,12 @@ class Settings:
             raise ValueError("SYMBOLS must be a nonempty comma-separated set")
         if cfg.timeframe not in {"M15", "H1"}:
             raise ValueError("Only M15 and H1 are supported in this starter")
-        if not (0 < cfg.risk_pct <= 0.5):
-            raise ValueError("For this starter, risk must be >0 and <=0.5 percent")
-        if not (0 < cfg.max_daily_loss_pct <= 2):
-            raise ValueError("For this starter, daily loss limit must be >0 and <=2 percent")
-        if cfg.max_open_positions not in (1, 2, 3):
-            raise ValueError("MAX_OPEN_POSITIONS must be between 1 and 3")
+        if not (0 < cfg.risk_pct <= MAX_RISK_PER_TRADE_PCT):
+            raise ValueError("RISK_PER_TRADE_PCT must be >0 and <=0.25 percent")
+        if not (0 < cfg.max_daily_loss_pct <= MAX_DAILY_LOSS_PCT):
+            raise ValueError("MAX_DAILY_LOSS_PCT must be >0 and <=1.0 percent")
+        if not (1 <= cfg.max_open_positions <= MAX_OPEN_POSITIONS):
+            raise ValueError("MAX_OPEN_POSITIONS must be between 1 and 2")
         if not (0 < cfg.max_spread_atr_ratio <= 0.2):
             raise ValueError("Spread/ATR fraction must be >0 and <=0.2")
         if not (10 <= cfg.poll_seconds <= 300):

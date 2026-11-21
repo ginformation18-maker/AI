@@ -5,6 +5,7 @@ import time
 import MetaTrader5 as mt5
 
 from .math_helpers import floor_volume, price_to_tick
+from .settings import MAX_DAILY_LOSS_PCT, MAX_OPEN_POSITIONS, MAX_RISK_PER_TRADE_PCT
 
 
 @dataclass(frozen=True)
@@ -22,23 +23,32 @@ class TradePlan:
     start_equity: float
 
 
-
-
 class RiskManagementAgent:
     def __init__(self, cfg):
         self.cfg = cfg
 
     def plan(self, signal, start_equity: float) -> TradePlan:
         cfg = self.cfg
+        # Revalidate immutable ceilings at the point of use; a manually built or
+        # mutated configuration must never bypass the settings loader.
+        if not (0 < float(cfg.risk_pct) <= MAX_RISK_PER_TRADE_PCT):
+            raise RuntimeError("Configured per-trade risk exceeds the hard 0.25 percent ceiling")
+        if not (0 < float(cfg.max_daily_loss_pct) <= MAX_DAILY_LOSS_PCT):
+            raise RuntimeError("Configured daily loss limit exceeds the hard 1.0 percent ceiling")
+        if not (1 <= int(cfg.max_open_positions) <= MAX_OPEN_POSITIONS):
+            raise RuntimeError("Configured maximum positions exceeds the hard limit of 2")
+        if not math.isfinite(float(start_equity)) or start_equity <= 0:
+            raise RuntimeError("Daily starting equity is invalid")
         account = mt5.account_info()
-        if account is None or int(account.login) != cfg.login or account.equity <= 0:
+        if account is None or int(account.login) != cfg.login or not math.isfinite(float(account.equity)) or account.equity <= 0:
             raise RuntimeError("Account identity unavailable or equity invalid")
-        if account.equity <= start_equity * (1 - cfg.max_daily_loss_pct / 100):
+        # Apply the hard ceiling directly, independent of cfg, as a circuit breaker.
+        if account.equity <= start_equity * (1 - MAX_DAILY_LOSS_PCT / 100):
             raise RuntimeError("Daily drawdown kill limit reached: no new positions")
         positions = mt5.positions_get()
         if positions is None:
             raise RuntimeError("Cannot read current MT5 positions")
-        if len(positions) >= cfg.max_open_positions:
+        if len(positions) >= MAX_OPEN_POSITIONS or len(positions) >= int(cfg.max_open_positions):
             raise RuntimeError("Maximum open positions reached (account-wide)")
         symbol_positions = mt5.positions_get(symbol=signal.symbol)
         pending = mt5.orders_get(symbol=signal.symbol)
@@ -82,8 +92,9 @@ class RiskManagementAgent:
         one_min_lot_loss = mt5.order_calc_profit(order_type, signal.symbol, min_lot, price, sl)
         if one_min_lot_loss is None or not math.isfinite(one_min_lot_loss) or one_min_lot_loss >= 0:
             raise RuntimeError(f"Cannot calculate stop-loss value: {mt5.last_error()}")
-        # Current equity and daily starting equity are both used for a conservative cap.
-        risk_budget = min(float(account.equity), start_equity) * cfg.risk_pct / 100
+        # Risk percentage is capped in code even if supplied cfg bypassed the loader.
+        risk_pct = min(float(cfg.risk_pct), MAX_RISK_PER_TRADE_PCT)
+        risk_budget = min(float(account.equity), start_equity) * risk_pct / 100
         raw = risk_budget / abs(one_min_lot_loss) * min_lot
         volume = floor_volume(raw, min_lot, max_lot, step)
         if volume == 0:
