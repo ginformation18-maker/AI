@@ -1,0 +1,115 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "window_id",
+    "agent",
+    "verdict",
+    "finding_codes",
+    "evidence_refs",
+    "responds_to",
+    "next_check_code"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "phase363-agent-reply-v2"
+    },
+    "window_id": {
+      "type": "string",
+      "pattern": "^raw-[0-9a-f]{16}$"
+    },
+    "agent": {
+      "enum": [
+        "MARKET_MICROSTRUCTURE",
+        "VOLATILITY_RISK",
+        "AUDIT_INTEGRITY",
+        "COORDINATOR"
+      ]
+    },
+    "verdict": {
+      "enum": [
+        "OBSERVATION",
+        "REVIEW_ONLY",
+        "INSUFFICIENT_DATA",
+        "HALTED",
+        "SUMMARY"
+      ]
+    },
+    "finding_codes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "SPREAD_WINDOW_RECORDED",
+          "SPREAD_CONSTANT_OBSERVED",
+          "TICK_RATE_RECORDED",
+          "VOL_UNAVAILABLE",
+          "VOL_WINDOW_RECORDED",
+          "VOL_BASELINE_UNAVAILABLE",
+          "DIRECTION_RATIO_UNAVAILABLE",
+          "TIMEBASE_UNVERIFIED",
+          "BASELINE_UNREADY",
+          "HEARTBEAT_UNVERIFIED",
+          "QUALITY_DEGRADED",
+          "QUALITY_HALTED",
+          "RESEARCH_ONLY",
+          "CERTIFICATION_REQUIRED",
+          "NO_TRADE_APPROVAL"
+        ]
+      }
+    },
+    "evidence_refs": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "timebase_status",
+          "quality.flag",
+          "quality.baseline_ready",
+          "quality.heartbeat_status",
+          "metrics.tick_count",
+          "metrics.tick_velocity_per_sec",
+          "metrics.spread_p50_points",
+          "metrics.spread_p95_points",
+          "metrics.spread_constant_observed_bool",
+          "metrics.spread_clamped_bool",
+          "metrics.realized_volatility",
+          "metrics.rolling_z_score_vol",
+          "metrics.directional_tick_ratio",
+          "metrics.max_gap_seconds"
+        ]
+      }
+    },
+    "responds_to": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        null,
+        "MARKET_MICROSTRUCTURE",
+        "VOLATILITY_RISK",
+        "AUDIT_INTEGRITY",
+        "COORDINATOR"
+      ]
+    },
+    "next_check_code": {
+      "enum": [
+        "CERTIFY_UTC_DST",
+        "COLLECT_SESSIONS",
+        "VERIFY_HEARTBEAT",
+        "CALCULATE_TIME_BAR_VOL",
+        "REVIEW_SPREAD_REGIME",
+        "NONE"
+      ]
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/phase363/agent_reply_v2.schema.json",
+  "title": "MT5 Phase 3.6.3 Agent Reply (Research Only)"
+}

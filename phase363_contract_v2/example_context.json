@@ -1,0 +1,44 @@
+{
+  "schema_version": "phase363-quant-context-v2",
+  "window_id": "raw-5f4983db7af21768",
+  "symbol": "XAUUSD",
+  "raw_start_ms": 1795197600000,
+  "raw_end_exclusive_ms": 1795197660000,
+  "utc_start_ms": null,
+  "timebase_status": "UNVERIFIED_PENDING_DST",
+  "source": {
+    "kind": "LEGACY_READONLY_PARQUET",
+    "sha256": "5f4983db7af217686f63f8862784dea185117a9ef45fd826b910606344109a2f",
+    "collector_schema": "legacy-raw-quote-example"
+  },
+  "metrics": {
+    "tick_count": 497,
+    "tick_velocity_per_sec": 8.28333,
+    "spread_p50_points": 15.0,
+    "spread_p95_points": 15.0,
+    "spread_constant_observed_bool": true,
+    "spread_clamped_bool": null,
+    "realized_volatility": null,
+    "realized_volatility_method": "NOT_COMPUTED",
+    "rolling_z_score_vol": null,
+    "rolling_baseline_window_count": 0,
+    "directional_tick_ratio": null,
+    "max_gap_seconds": 0.403,
+    "rv_sample_count": 0
+  },
+  "quality": {
+    "flag": "DEGRADED",
+    "reasons": [
+      "TIMEBASE_UNVERIFIED",
+      "BASELINE_UNREADY",
+      "HEARTBEAT_UNVERIFIED"
+    ],
+    "baseline_ready": false,
+    "five_sessions_certified": false,
+    "heartbeat_status": "UNVERIFIED"
+  },
+  "permissions": {
+    "allow_discussion": true,
+    "allow_trade_decisions": false
+  }
+}

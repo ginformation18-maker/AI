@@ -1,0 +1,17 @@
+{
+  "schema_version": "phase363-grounding-v1",
+  "snapshot_id": "raw-5f4983db7af21768",
+  "symbol": "XAUUSD",
+  "source": "PHASE36_2_ARCHIVED_QUANT_REPORT",
+  "timebase_status": "UNVERIFIED_PENDING_DST",
+  "baseline_ready": false,
+  "window_scope": "SINGLE_RAW_WINDOW",
+  "metrics": {
+    "spread_p95_window_points": 15.0,
+    "tick_velocity_per_sec": 8.28333,
+    "rv_mid_tick_window": 0.0006623035,
+    "max_gap_seconds": 0.403,
+    "quote_tick_count": 497
+  },
+  "limitations": ["UNCERTIFIED_TIMEBASE", "NO_MULTI_SESSION_BASELINE", "TICK_RV_NOISE_PRONE"]
+}

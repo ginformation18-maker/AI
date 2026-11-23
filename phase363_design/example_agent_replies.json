@@ -1,0 +1,42 @@
+[
+  {
+    "schema_version": "phase363-grounding-v1",
+    "snapshot_id": "raw-5f4983db7af21768",
+    "agent": "MARKET",
+    "verdict": "OBSERVATION",
+    "evidence_refs": ["spread_p95_window_points", "quote_tick_count"],
+    "responds_to": null,
+    "claim": "هذه نافذة تسعير واحدة ولا تثبت سلوك السبريد في بقية الجلسات.",
+    "next_check": "اجمع نوافذ مستقلة في فترات سيولة مختلفة."
+  },
+  {
+    "schema_version": "phase363-grounding-v1",
+    "snapshot_id": "raw-5f4983db7af21768",
+    "agent": "QUANT",
+    "verdict": "TESTABLE_HYPOTHESIS",
+    "evidence_refs": ["tick_velocity_per_sec", "rv_mid_tick_window"],
+    "responds_to": "MARKET",
+    "claim": "يمكن اختبار ارتباط تواتر التكات بتقلب نافذة التسعير بعد معالجة الضجيج.",
+    "next_check": "قارن عينات زمنية متساوية عبر جلسات مستقلة."
+  },
+  {
+    "schema_version": "phase363-grounding-v1",
+    "snapshot_id": "raw-5f4983db7af21768",
+    "agent": "RISK",
+    "verdict": "CHALLENGE",
+    "evidence_refs": ["rv_mid_tick_window", "max_gap_seconds"],
+    "responds_to": "QUANT",
+    "claim": "اعتراض على تفسير التقلب قبل قياس حساسيته لضجيج تحديثات الأسعار.",
+    "next_check": "اختبر تقدير التقلب بعينات زمنية مختلفة."
+  },
+  {
+    "schema_version": "phase363-grounding-v1",
+    "snapshot_id": "raw-5f4983db7af21768",
+    "agent": "COORDINATOR",
+    "verdict": "SUMMARY",
+    "evidence_refs": ["spread_p95_window_points", "rv_mid_tick_window"],
+    "responds_to": "RISK",
+    "claim": "يتفق الوكلاء على وجود عينة قابلة للوصف مع غياب مرجع جلسات معتمد.",
+    "next_check": "اعتمد مصدر التوقيت ثم قارن نوافذ متعددة."
+  }
+]

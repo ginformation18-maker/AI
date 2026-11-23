@@ -1,0 +1,240 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "window_id",
+    "symbol",
+    "raw_start_ms",
+    "raw_end_exclusive_ms",
+    "utc_start_ms",
+    "timebase_status",
+    "source",
+    "metrics",
+    "quality",
+    "permissions"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "phase363-quant-context-v2"
+    },
+    "window_id": {
+      "type": "string",
+      "pattern": "^raw-[0-9a-f]{16}$"
+    },
+    "symbol": {
+      "enum": [
+        "XAUUSD",
+        "EURUSD"
+      ]
+    },
+    "raw_start_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "raw_end_exclusive_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "utc_start_ms": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "timebase_status": {
+      "enum": [
+        "UNVERIFIED_PENDING_DST",
+        "CERTIFIED_UTC",
+        "TIMEBASE_MISMATCH"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "sha256",
+        "collector_schema"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "SHADOW_RAW_PARQUET",
+            "CERTIFIED_DERIVED",
+            "LEGACY_READONLY_PARQUET"
+          ]
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "collector_schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tick_count",
+        "tick_velocity_per_sec",
+        "spread_p50_points",
+        "spread_p95_points",
+        "spread_constant_observed_bool",
+        "spread_clamped_bool",
+        "realized_volatility",
+        "realized_volatility_method",
+        "rolling_z_score_vol",
+        "rolling_baseline_window_count",
+        "directional_tick_ratio",
+        "max_gap_seconds",
+        "rv_sample_count"
+      ],
+      "properties": {
+        "tick_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "tick_velocity_per_sec": {
+          "type": "number",
+          "minimum": 0
+        },
+        "spread_p50_points": {
+          "type": "number",
+          "minimum": 0
+        },
+        "spread_p95_points": {
+          "type": "number",
+          "minimum": 0
+        },
+        "spread_constant_observed_bool": {
+          "type": "boolean"
+        },
+        "spread_clamped_bool": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "realized_volatility": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "realized_volatility_method": {
+          "enum": [
+            "NOT_COMPUTED",
+            "STD_LOG_RETURNS_1S",
+            "STD_LOG_RETURNS_5S"
+          ]
+        },
+        "rolling_z_score_vol": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "rolling_baseline_window_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "directional_tick_ratio": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "max_gap_seconds": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "rv_sample_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "quality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "flag",
+        "reasons",
+        "baseline_ready",
+        "five_sessions_certified",
+        "heartbeat_status"
+      ],
+      "properties": {
+        "flag": {
+          "enum": [
+            "PASSED",
+            "DEGRADED",
+            "HALTED"
+          ]
+        },
+        "reasons": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 12,
+          "items": {
+            "enum": [
+              "TIMEBASE_UNVERIFIED",
+              "TIMEBASE_MISMATCH",
+              "BASELINE_UNREADY",
+              "HEARTBEAT_UNVERIFIED",
+              "SOURCE_UNVERIFIED",
+              "INCOMPLETE_WINDOW",
+              "NO_PRICE_MOVES",
+              "INSUFFICIENT_SAMPLED_RETURNS",
+              "OTHER_CHECK_REQUIRED"
+            ]
+          }
+        },
+        "baseline_ready": {
+          "type": "boolean"
+        },
+        "five_sessions_certified": {
+          "type": "boolean"
+        },
+        "heartbeat_status": {
+          "enum": [
+            "UNVERIFIED",
+            "OK",
+            "GAP_DETECTED"
+          ]
+        }
+      }
+    },
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allow_discussion",
+        "allow_trade_decisions"
+      ],
+      "properties": {
+        "allow_discussion": {
+          "const": true
+        },
+        "allow_trade_decisions": {
+          "const": false
+        }
+      }
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/phase363/quant_context_v2.schema.json",
+  "title": "MT5 Phase 3.6.3 Quant Context (Research Only)"
+}

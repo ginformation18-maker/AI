@@ -1,0 +1,72 @@
+[
+  {
+    "schema_version": "phase363-agent-reply-v2",
+    "window_id": "raw-5f4983db7af21768",
+    "agent": "MARKET_MICROSTRUCTURE",
+    "verdict": "OBSERVATION",
+    "finding_codes": [
+      "SPREAD_WINDOW_RECORDED",
+      "SPREAD_CONSTANT_OBSERVED",
+      "TICK_RATE_RECORDED"
+    ],
+    "evidence_refs": [
+      "metrics.spread_p50_points",
+      "metrics.spread_p95_points",
+      "metrics.spread_constant_observed_bool",
+      "metrics.tick_velocity_per_sec"
+    ],
+    "responds_to": null,
+    "next_check_code": "REVIEW_SPREAD_REGIME"
+  },
+  {
+    "schema_version": "phase363-agent-reply-v2",
+    "window_id": "raw-5f4983db7af21768",
+    "agent": "VOLATILITY_RISK",
+    "verdict": "INSUFFICIENT_DATA",
+    "finding_codes": [
+      "VOL_UNAVAILABLE",
+      "VOL_BASELINE_UNAVAILABLE"
+    ],
+    "evidence_refs": [
+      "metrics.realized_volatility",
+      "quality.baseline_ready"
+    ],
+    "responds_to": "MARKET_MICROSTRUCTURE",
+    "next_check_code": "CALCULATE_TIME_BAR_VOL"
+  },
+  {
+    "schema_version": "phase363-agent-reply-v2",
+    "window_id": "raw-5f4983db7af21768",
+    "agent": "AUDIT_INTEGRITY",
+    "verdict": "REVIEW_ONLY",
+    "finding_codes": [
+      "TIMEBASE_UNVERIFIED",
+      "BASELINE_UNREADY",
+      "HEARTBEAT_UNVERIFIED"
+    ],
+    "evidence_refs": [
+      "timebase_status",
+      "quality.baseline_ready",
+      "quality.heartbeat_status"
+    ],
+    "responds_to": "VOLATILITY_RISK",
+    "next_check_code": "CERTIFY_UTC_DST"
+  },
+  {
+    "schema_version": "phase363-agent-reply-v2",
+    "window_id": "raw-5f4983db7af21768",
+    "agent": "COORDINATOR",
+    "verdict": "SUMMARY",
+    "finding_codes": [
+      "RESEARCH_ONLY",
+      "CERTIFICATION_REQUIRED",
+      "NO_TRADE_APPROVAL"
+    ],
+    "evidence_refs": [
+      "quality.flag",
+      "timebase_status"
+    ],
+    "responds_to": "AUDIT_INTEGRITY",
+    "next_check_code": "COLLECT_SESSIONS"
+  }
+]
