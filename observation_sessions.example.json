@@ -1,7 +1,0 @@
-{
-  "symbol": "XAUUSD",
-  "account_login": 12345678,
-  "broker_server": "REPLACE_WITH_EXACT_BROKER_DEMO_SERVER",
-  "window_seconds": 60,
-  "sessions": []
-}
